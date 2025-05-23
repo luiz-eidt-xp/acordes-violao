@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcordViolão | Todos os acordes de violão acústico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .diagrama-acorde {
+            position: relative;
+            width: 120px;
+            height: 150px;
+            margin: 0 auto;
+        }
+        .capotraste {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #333;
+        }
+        .traste {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #ccc;
+        }
+        .corda {
+            position: absolute;
+            width: 2px;
+            height: 130px;
+            background-color: #666;
+            top: 20px;
+        }
+        .dedo {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+        }
+        .aberta {
+            position: absolute;
+            top: 5px;
+            font-size: 12px;
+            transform: translateX(-50%);
+        }
+        .muda {
+            position: absolute;
+            top: 5px;
+            font-size: 12px;
+            transform: translateX(-50%);
+        }
+        .numero-casa {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+        
+        /* Barra de rolagem personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Animação para troca de acordes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animar-acorde {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Estilo para mobile */
+        @media (max-width: 640px) {
+            .diagrama-acorde {
+                width: 90px;
+                height: 120px;
+            }
+            .dedo {
+                width: 18px;
+                height: 18px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <header class="bg-gradient-to-r from-green-600 to-green-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-3 md:mb-0">
+                    <i class="fas fa-guitar text-2xl mr-2"></i>
+                    <h1 class="text-xl md:text-2xl font-bold">AcordViolão</h1>
+                </div>
+                <div class="relative w-full md:w-64">
+                    <input type="text" id="campoBusca" placeholder="Buscar acordes (ex: Dó maior, Lá m7)" 
+                           class="w-full px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm">
+                    <button id="botaoBusca" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-green-600">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Menu lateral -->
+            <aside class="w-full lg:w-56 bg-white rounded-lg shadow-md p-4 h-fit sticky top-4">
+                <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-2">Navegar</h2>
+                
+                <div class="mb-5">
+                    <h3 class="font-semibold text-gray-700 mb-2 text-sm">Nota Base</h3>
+                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-3 gap-1">
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="A">Lá</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="B">Si</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="C">Dó</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="D">Ré</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="E">Mi</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="F">Fá</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="G">Sol</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="A#">Lá#</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="C#">Dó#</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="D#">Ré#</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="F#">Fá#</button>
+                        <button class="botao-nota bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded text-sm" data-nota="G#">Sol#</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2 text-sm">Tipo de Acorde</h3>
+                    <div class="space-y-1">
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="major">Maior</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="minor">Menor</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="7">7ª</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="m7">7ª menor</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="maj7">7ª maior</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="sus2">Sus2</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="sus4">Sus4</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="dim">Diminuto</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="aug">Aumentado</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="6">6ª</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="9">9ª</button>
+                        <button class="botao-tipo w-full text-left py-1 px-2 rounded hover:bg-gray-100 text-sm" data-tipo="add9">Add9</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Conteúdo principal -->
+            <div class="flex-1">
+                <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+                    <h2 class="text-xl font-bold text-gray-800 mb-3" id="tituloAtual">Todos os Acordes</h2>
+                    <p class="text-gray-600 mb-3 text-sm">Selecione uma nota base e tipo de acorde para ver os diagramas. Clique em qualquer acorde para ver detalhes.</p>
+                    
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="flex-1 bg-gray-100 h-px"></div>
+                        <span class="text-gray-500 font-medium text-sm">Acordes Populares</span>
+                        <div class="flex-1 bg-gray-100 h-px"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-6">
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="C-major">
+                            <span class="font-bold text-green-800">Dó</span>
+                            <span class="text-xs text-gray-500">Maior</span>
+                        </button>
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="G-major">
+                            <span class="font-bold text-green-800">Sol</span>
+                            <span class="text-xs text-gray-500">Maior</span>
+                        </button>
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="D-major">
+                            <span class="font-bold text-green-800">Ré</span>
+                            <span class="text-xs text-gray-500">Maior</span>
+                        </button>
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="A-minor">
+                            <span class="font-bold text-green-800">Lá m</span>
+                            <span class="text-xs text-gray-500">Menor</span>
+                        </button>
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="E-minor">
+                            <span class="font-bold text-green-800">Mi m</span>
+                            <span class="text-xs text-gray-500">Menor</span>
+                        </button>
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="F-major">
+                            <span class="font-bold text-green-800">Fá</span>
+                            <span class="text-xs text-gray-500">Maior</span>
+                        </button>
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="E-major">
+                            <span class="font-bold text-green-800">Mi</span>
+                            <span class="text-xs text-gray-500">Maior</span>
+                        </button>
+                        <button class="acorde-rapido bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-2 flex flex-col items-center" data-acorde="A-major">
+                            <span class="font-bold text-green-800">Lá</span>
+                            <span class="text-xs text-gray-500">Maior</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="flex-1 bg-gray-100 h-px"></div>
+                        <span class="text-gray-500 font-medium text-sm" id="tituloResultados">Resultados</span>
+                        <div class="flex-1 bg-gray-100 h-px"></div>
+                    </div>
+                    
+                    <div id="resultadosAcordes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <!-- Diagramas de acordes serão inseridos aqui pelo JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Detalhes do Acorde</h2>
+                    <div id="detalheAcorde" class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+                        <div class="text-center">
+                            <div id="diagramaDetalhe" class="diagrama-acorde mb-3"></div>
+                            <button id="tocarAcorde" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full flex items-center mx-auto text-sm">
+                                <i class="fas fa-play mr-1"></i> Tocar Acorde
+                            </button>
+                            <audio id="audioAcorde" src=""></audio>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="tituloDetalhe" class="text-lg font-bold text-gray-800 mb-2">Selecione um acorde</h3>
+                            <div id="detalheDedilhado" class="mb-3">
+                                <p class="text-gray-600 text-sm">As posições dos dedos aparecerão aqui quando você selecionar um acorde.</p>
+                            </div>
+                            <div id="detalheNotas" class="bg-gray-50 p-3 rounded-lg">
+                                <h4 class="font-semibold text-gray-700 mb-1 text-sm">Notas neste acorde:</h4>
+                                <p class="text-gray-600 text-sm">Selecione um acorde para ver suas notas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-lg font-bold mb-1">AcordViolão</h2>
+                    <p class="text-gray-400 text-sm">Sua biblioteca completa de acordes para violão</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Banco de dados de acordes
+        const acordes = {
+            // Acordes maiores
+            'A-major': {
+                nome: 'Lá Maior',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 2, dedo: 2 },
+                    { corda: 3, casa: 2, dedo: 3 },
+                    { corda: 4, casa: 2, dedo: 1 },
+                    { corda: 5, casa: 0, dedo: 0 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Lá', 'Dó#', 'Mi'],
+                audio: 'https://www.guitar-chords.org.uk/audio/a-major-chord.mp3'
+            },
+            'B-major': {
+                nome: 'Si Maior',
+                posicoes: [
+                    { corda: 1, casa: 2, dedo: 1 },
+                    { corda: 2, casa: 4, dedo: 3 },
+                    { corda: 3, casa: 4, dedo: 4 },
+                    { corda: 4, casa: 4, dedo: 2 },
+                    { corda: 5, casa: 2, dedo: 1 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Si', 'Ré#', 'Fá#'],
+                audio: 'https://www.guitar-chords.org.uk/audio/b-major-chord.mp3'
+            },
+            'C-major': {
+                nome: 'Dó Maior',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 1, dedo: 1 },
+                    { corda: 3, casa: 0, dedo: 0 },
+                    { corda: 4, casa: 2, dedo: 2 },
+                    { corda: 5, casa: 3, dedo: 3 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Dó', 'Mi', 'Sol'],
+                audio: 'https://www.guitar-chords.org.uk/audio/c-major-chord.mp3'
+            },
+            'D-major': {
+                nome: 'Ré Maior',
+                posicoes: [
+                    { corda: 1, casa: 2, dedo: 3 },
+                    { corda: 2, casa: 3, dedo: 4 },
+                    { corda: 3, casa: 2, dedo: 2 },
+                    { corda: 4, casa: 0, dedo: 0 },
+                    { corda: 5, casa: 'x', dedo: 0 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Ré', 'Fá#', 'Lá'],
+                audio: 'https://www.guitar-chords.org.uk/audio/d-major-chord.mp3'
+            },
+            'E-major': {
+                nome: 'Mi Maior',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 0, dedo: 0 },
+                    { corda: 3, casa: 1, dedo: 1 },
+                    { corda: 4, casa: 2, dedo: 2 },
+                    { corda: 5, casa: 2, dedo: 3 },
+                    { corda: 6, casa: 0, dedo: 0 }
+                ],
+                notas: ['Mi', 'Sol#', 'Si'],
+                audio: 'https://www.guitar-chords.org.uk/audio/e-major-chord.mp3'
+            },
+            'F-major': {
+                nome: 'Fá Maior',
+                posicoes: [
+                    { corda: 1, casa: 1, dedo: 1 },
+                    { corda: 2, casa: 1, dedo: 1 },
+                    { corda: 3, casa: 2, dedo: 2 },
+                    { corda: 4, casa: 3, dedo: 3 },
+                    { corda: 5, casa: 3, dedo: 4 },
+                    { corda: 6, casa: 1, dedo: 1 }
+                ],
+                notas: ['Fá', 'Lá', 'Dó'],
+                audio: 'https://www.guitar-chords.org.uk/audio/f-major-chord.mp3'
+            },
+            'G-major': {
+                nome: 'Sol Maior',
+                posicoes: [
+                    { corda: 1, casa: 3, dedo: 4 },
+                    { corda: 2, casa: 0, dedo: 0 },
+                    { corda: 3, casa: 0, dedo: 0 },
+                    { corda: 4, casa: 0, dedo: 0 },
+                    { corda: 5, casa: 2, dedo: 2 },
+                    { corda: 6, casa: 3, dedo: 3 }
+                ],
+                notas: ['Sol', 'Si', 'Ré'],
+                audio: 'https://www.guitar-chords.org.uk/audio/g-major-chord.mp3'
+            },
+            
+            // Acordes menores
+            'A-minor': {
+                nome: 'Lá Menor',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 1, dedo: 1 },
+                    { corda: 3, casa: 2, dedo: 3 },
+                    { corda: 4, casa: 2, dedo: 2 },
+                    { corda: 5, casa: 0, dedo: 0 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Lá', 'Dó', 'Mi'],
+                audio: 'https://www.guitar-chords.org.uk/audio/a-minor-chord.mp3'
+            },
+            'B-minor': {
+                nome: 'Si Menor',
+                posicoes: [
+                    { corda: 1, casa: 2, dedo: 1 },
+                    { corda: 2, casa: 3, dedo: 3 },
+                    { corda: 3, casa: 4, dedo: 4 },
+                    { corda: 4, casa: 4, dedo: 2 },
+                    { corda: 5, casa: 2, dedo: 1 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Si', 'Ré', 'Fá#'],
+                audio: 'https://www.guitar-chords.org.uk/audio/b-minor-chord.mp3'
+            },
+            'C-minor': {
+                nome: 'Dó Menor',
+                posicoes: [
+                    { corda: 1, casa: 3, dedo: 3 },
+                    { corda: 2, casa: 4, dedo: 4 },
+                    { corda: 3, casa: 5, dedo: 4 },
+                    { corda: 4, casa: 5, dedo: 4 },
+                    { corda: 5, casa: 3, dedo: 1 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Dó', 'Ré#', 'Sol'],
+                audio: 'https://www.guitar-chords.org.uk/audio/c-minor-chord.mp3'
+            },
+            'D-minor': {
+                nome: 'Ré Menor',
+                posicoes: [
+                    { corda: 1, casa: 1, dedo: 1 },
+                    { corda: 2, casa: 3, dedo: 3 },
+                    { corda: 3, casa: 2, dedo: 2 },
+                    { corda: 4, casa: 0, dedo: 0 },
+                    { corda: 5, casa: 'x', dedo: 0 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Ré', 'Fá', 'Lá'],
+                audio: 'https://www.guitar-chords.org.uk/audio/d-minor-chord.mp3'
+            },
+            'E-minor': {
+                nome: 'Mi Menor',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 0, dedo: 0 },
+                    { corda: 3, casa: 0, dedo: 0 },
+                    { corda: 4, casa: 2, dedo: 2 },
+                    { corda: 5, casa: 2, dedo: 3 },
+                    { corda: 6, casa: 0, dedo: 0 }
+                ],
+                notas: ['Mi', 'Sol', 'Si'],
+                audio: 'https://www.guitar-chords.org.uk/audio/e-minor-chord.mp3'
+            },
+            'F-minor': {
+                nome: 'Fá Menor',
+                posicoes: [
+                    { corda: 1, casa: 1, dedo: 1 },
+                    { corda: 2, casa: 1, dedo: 1 },
+                    { corda: 3, casa: 1, dedo: 1 },
+                    { corda: 4, casa: 3, dedo: 3 },
+                    { corda: 5, casa: 3, dedo: 4 },
+                    { corda: 6, casa: 1, dedo: 1 }
+                ],
+                notas: ['Fá', 'Sol#', 'Dó'],
+                audio: 'https://www.guitar-chords.org.uk/audio/f-minor-chord.mp3'
+            },
+            'G-minor': {
+                nome: 'Sol Menor',
+                posicoes: [
+                    { corda: 1, casa: 3, dedo: 4 },
+                    { corda: 2, casa: 3, dedo: 3 },
+                    { corda: 3, casa: 3, dedo: 2 },
+                    { corda: 4, casa: 0, dedo: 0 },
+                    { corda: 5, casa: 2, dedo: 1 },
+                    { corda: 6, casa: 3, dedo: 4 }
+                ],
+                notas: ['Sol', 'Lá#', 'Ré'],
+                audio: 'https://www.guitar-chords.org.uk/audio/g-minor-chord.mp3'
+            },
+            
+            // Acordes de 7ª
+            'A-7': {
+                nome: 'Lá7',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 2, dedo: 2 },
+                    { corda: 3, casa: 0, dedo: 0 },
+                    { corda: 4, casa: 2, dedo: 1 },
+                    { corda: 5, casa: 0, dedo: 0 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Lá', 'Dó#', 'Mi', 'Sol'],
+                audio: 'https://www.guitar-chords.org.uk/audio/a7-chord.mp3'
+            },
+            'B-7': {
+                nome: 'Si7',
+                posicoes: [
+                    { corda: 1, casa: 2, dedo: 1 },
+                    { corda: 2, casa: 0, dedo: 0 },
+                    { corda: 3, casa: 2, dedo: 2 },
+                    { corda: 4, casa: 1, dedo: 1 },
+                    { corda: 5, casa: 2, dedo: 3 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Si', 'Ré#', 'Fá#', 'Lá'],
+                audio: 'https://www.guitar-chords.org.uk/audio/b7-chord.mp3'
+            },
+            'C-7': {
+                nome: 'Dó7',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 1, dedo: 1 },
+                    { corda: 3, casa: 0, dedo: 0 },
+                    { corda: 4, casa: 2, dedo: 3 },
+                    { corda: 5, casa: 3, dedo: 4 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Dó', 'Mi', 'Sol', 'Lá#'],
+                audio: 'https://www.guitar-chords.org.uk/audio/c7-chord.mp3'
+            },
+            'D-7': {
+                nome: 'Ré7',
+                posicoes: [
+                    { corda: 1, casa: 2, dedo: 2 },
+                    { corda: 2, casa: 1, dedo: 1 },
+                    { corda: 3, casa: 2, dedo: 3 },
+                    { corda: 4, casa: 0, dedo: 0 },
+                    { corda: 5, casa: 'x', dedo: 0 },
+                    { corda: 6, casa: 'x', dedo: 0 }
+                ],
+                notas: ['Ré', 'Fá#', 'Lá', 'Dó'],
+                audio: 'https://www.guitar-chords.org.uk/audio/d7-chord.mp3'
+            },
+            'E-7': {
+                nome: 'Mi7',
+                posicoes: [
+                    { corda: 1, casa: 0, dedo: 0 },
+                    { corda: 2, casa: 0, dedo: 0 },
+                    { corda: 3, casa: 1, dedo: 1 },
+                    { corda: 4, casa: 0, dedo: 0 },
+                    { corda: 5, casa: 2, dedo: 2 },
+                    { corda: 6, casa: 0, dedo: 0 }
+                ],
+                notas: ['Mi', 'Sol#', 'Si', 'Ré'],
+                audio: 'https://www.guitar-chords.org.uk/audio/e7-chord.mp3'
+            },
+            'F-7': {
+                nome: 'Fá7',
+                posicoes: [
+                    { corda: 1, casa: 1, dedo: 1 },
+                    { corda: 2, casa: 1, dedo: 1 },
+                    { corda: 3, casa: 2, dedo: 2 },
+                    { corda: 4, casa: 3, dedo: 4 },
+                    { corda: 5, casa: 3, dedo: 3 },
+                    { corda: 6, casa: 1, dedo: 1 }
+                ],
+                notas: ['Fá', 'Lá', 'Dó', 'Ré#'],
+                audio: 'https://www.guitar-chords.org.uk/audio/f7-chord.mp3'
+            },
+            'G-7': {
+                nome: 'Sol7',
+                posicoes: [
+                    { corda: 1, casa: 1, dedo: 1 },
+                    { corda: 2, casa: 0, dedo: 0 },
+                    { corda: 3, casa: 0, dedo: 0 },
+                    { corda: 4, casa: 0, dedo: 0 },
+                    { corda: 5, casa: 2, dedo: 2 },
+                    { corda: 6, casa: 3, dedo: 3 }
+                ],
+                notas: ['Sol', 'Si', 'Ré', 'Fá'],
+                audio: 'https://www.guitar-chords.org.uk/audio/g7-chord.mp3'
+            },
+            
+            // Adicione mais acordes conforme necessário...
+        };
+
+        // Elementos DOM
+        const resultadosAcordes = document.getElementById('resultadosAcordes');
+        const detalheAcorde = document.getElementById('detalheAcorde');
+        const diagramaDetalhe = document.getElementById('diagramaDetalhe');
+        const tituloDetalhe = document.getElementById('tituloDetalhe');
+        const detalheDedilhado = document.getElementById('detalheDedilhado');
+        const detalheNotas = document.getElementById('detalheNotas');
+        const audioAcorde = document.getElementById('audioAcorde');
+        const tocarAcorde = document.getElementById('tocarAcorde');
+        const tituloAtual = document.getElementById('tituloAtual');
+        const tituloResultados = document.getElementById('tituloResultados');
+        const campoBusca = document.getElementById('campoBusca');
+        const botaoBusca = document.getElementById('botaoBusca');
+        
+        // Botões de navegação
+        const botoesNota = document.querySelectorAll('.botao-nota');
+        const botoesTipo = document.querySelectorAll('.botao-tipo');
+        const acordesRapidos = document.querySelectorAll('.acorde-rapido');
+
+        // Estado atual dos filtros
+        let notaAtual = null;
+        let tipoAtual = null;
+
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar alguns acordes populares por padrão
+            mostrarAcordes(['C-major', 'G-major', 'D-major', 'A-minor', 'E-minor', 'F-major']);
+            
+            // Adicionar listeners de eventos
+            botoesNota.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    notaAtual = this.getAttribute('data-nota');
+                    atualizarBotoesAtivos();
+                    filtrarAcordes();
+                });
+            });
+            
+            botoesTipo.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    tipoAtual = this.getAttribute('data-tipo');
+                    atualizarBotoesAtivos();
+                    filtrarAcordes();
+                });
+            });
+            
+            acordesRapidos.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const acordeId = this.getAttribute('data-acorde');
+                    mostrarDetalheAcorde(acordeId);
+                });
+            });
+            
+            tocarAcorde.addEventListener('click', function() {
+                if (audioAcorde.src) {
+                    audioAcorde.currentTime = 0;
+                    audioAcorde.play();
+                }
+            });
+            
+            botaoBusca.addEventListener('click', buscarAcordes);
+            campoBusca.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    buscarAcordes();
+                }
+            });
+        });
+
+        // Atualizar estilo dos botões ativos
+        function atualizarBotoesAtivos() {
+            botoesNota.forEach(botao => {
+                if (botao.getAttribute('data-nota') === notaAtual) {
+                    botao.classList.add('bg-green-500', 'text-white');
+                    botao.classList.remove('bg-green-100', 'text-green-800');
+                } else {
+                    botao.classList.remove('bg-green-500', 'text-white');
+                    botao.classList.add('bg-green-100', 'text-green-800');
+                }
+            });
+            
+            botoesTipo.forEach(botao => {
+                if (botao.getAttribute('data-tipo') === tipoAtual) {
+                    botao.classList.add('bg-green-500', 'text-white');
+                    botao.classList.remove('hover:bg-gray-100');
+                } else {
+                    botao.classList.remove('bg-green-500', 'text-white');
+                    botao.classList.add('hover:bg-gray-100');
+                }
+            });
+        }
+
+        // Filtrar acordes com base na nota e tipo atuais
+        function filtrarAcordes() {
+            let acordesFiltrados = [];
+            
+            if (notaAtual && tipoAtual) {
+                const acordeId = `${notaAtual}-${tipoAtual}`;
+                if (acordes[acordeId]) {
+                    acordesFiltrados.push(acordeId);
+                }
+                
+                tituloAtual.textContent = `${traduzirNota(notaAtual)} ${traduzirTipo(tipoAtual)}`;
+                tituloResultados.textContent = 'Acordes Encontrados';
+            } else if (notaAtual) {
+                // Mostrar todos os tipos para a nota selecionada
+                for (const acordeId in acordes) {
+                    if (acordeId.startsWith(notaAtual + '-')) {
+                        acordesFiltrados.push(acordeId);
+                    }
+                }
+                
+                tituloAtual.textContent = `Acordes de ${traduzirNota(notaAtual)}`;
+                tituloResultados.textContent = 'Todos os Tipos';
+            } else if (tipoAtual) {
+                // Mostrar todas as notas para o tipo selecionado
+                for (const acordeId in acordes) {
+                    if (acordeId.endsWith('-' + tipoAtual)) {
+                        acordesFiltrados.push(acordeId);
+                    }
+                }
+                
+                tituloAtual.textContent = `Acordes ${traduzirTipo(tipoAtual)}`;
+                tituloResultados.textContent = 'Todas as Notas';
+            } else {
+                // Sem filtros - mostrar todos os acordes
+                for (const acordeId in acordes) {
+                    acordesFiltrados.push(acordeId);
+                }
+                
+                tituloAtual.textContent = 'Todos os Acordes';
+                tituloResultados.textContent = 'Resultados';
+            }
+            
+            mostrarAcordes(acordesFiltrados);
+            
+            // Mostrar o primeiro acorde na visualização de detalhes se houver resultados
+            if (acordesFiltrados.length > 0) {
+                mostrarDetalheAcorde(acordesFiltrados[0]);
+            } else {
+                mostrarDetalheAcorde(null);
+            }
+        }
+
+        // Traduzir nota para português
+        function traduzirNota(nota) {
+            const notas = {
+                'A': 'Lá', 'B': 'Si', 'C': 'Dó', 'D': 'Ré', 'E': 'Mi', 
+                'F': 'Fá', 'G': 'Sol', 'A#': 'Lá#', 'C#': 'Dó#', 
+                'D#': 'Ré#', 'F#': 'Fá#', 'G#': 'Sol#'
+            };
+            return notas[nota] || nota;
+        }
+
+        // Traduzir tipo de acorde para português
+        function traduzirTipo(tipo) {
+            const tipos = {
+                'major': 'Maior', 'minor': 'Menor', '7': '7ª', 
+                'm7': '7ª menor', 'maj7': '7ª maior', 'sus2': 'Sus2', 
+                'sus4': 'Sus4', 'dim': 'Diminuto', 'aug': 'Aumentado',
+                '6': '6ª', '9': '9ª', 'add9': 'Add9'
+            };
+            return tipos[tipo] || tipo;
+        }
+
+        // Mostrar acordes específicos na grade de resultados
+        function mostrarAcordes(acordeIds) {
+            resultadosAcordes.innerHTML = '';
+            
+            acordeIds.forEach(acordeId => {
+                if (acordes[acordeId]) {
+                    const acorde = acordes[acordeId];
+                    const elementoAcorde = document.createElement('div');
+                    elementoAcorde.className = 'bg-white hover:bg-gray-50 border border-gray-200 rounded-lg p-3 flex flex-col items-center cursor-pointer transition-all hover:shadow-md animar-acorde';
+                    elementoAcorde.innerHTML = `
+                        <div class="diagrama-acorde mb-1" id="diagrama-${acordeId}"></div>
+                        <span class="font-bold text-gray-800 text-sm">${acorde.nome}</span>
+                    `;
+                    elementoAcorde.addEventListener('click', () => mostrarDetalheAcorde(acordeId));
+                    
+                    resultadosAcordes.appendChild(elementoAcorde);
+                    
+                    // Renderizar o diagrama pequeno
+                    renderizarDiagramaAcorde(`diagrama-${acordeId}`, acorde.posicoes, false);
+                }
+            });
+        }
+
+        // Mostrar detalhes do acorde na visualização de detalhes
+        function mostrarDetalheAcorde(acordeId) {
+            if (!acordeId || !acordes[acordeId]) {
+                tituloDetalhe.textContent = 'Selecione um acorde';
+                diagramaDetalhe.innerHTML = '';
+                detalheDedilhado.innerHTML = '<p class="text-gray-600 text-sm">As posições dos dedos aparecerão aqui quando você selecionar um acorde.</p>';
+                detalheNotas.innerHTML = '<p class="text-gray-600 text-sm">Selecione um acorde para ver suas notas.</p>';
+                audioAcorde.src = '';
+                return;
+            }
+            
+            const acorde = acordes[acordeId];
+            
+            // Atualizar título
+            tituloDetalhe.textContent = acorde.nome;
+            
+            // Renderizar o diagrama grande
+            diagramaDetalhe.innerHTML = '';
+            renderizarDiagramaAcorde('diagramaDetalhe', acorde.posicoes, true);
+            
+            // Atualizar informações de dedilhado
+            let htmlDedilhado = '<div class="grid grid-cols-2 gap-2">';
+            acorde.posicoes.forEach((pos, index) => {
+                if (pos.casa !== 'x') {
+                    const nomeCorda = ['Mi agudo', 'Si', 'Sol', 'Ré', 'Lá', 'Mi grave'][index];
+                    const textoCasa = pos.casa === 0 ? 'Solto' : `Casa ${pos.casa}`;
+                    const textoDedo = pos.dedo === 0 ? 'Solto' : `Dedo ${pos.dedo}`;
+                    
+                    htmlDedilhado += `
+                        <div class="bg-gray-100 p-2 rounded text-sm">
+                            <span class="font-semibold">Corda ${nomeCorda}:</span>
+                            <div>${textoCasa}, ${textoDedo}</div>
+                        </div>
+                    `;
+                }
+            });
+            htmlDedilhado += '</div>';
+            detalheDedilhado.innerHTML = htmlDedilhado;
+            
+            // Atualizar informações de notas
+            detalheNotas.innerHTML = `
+                <h4 class="font-semibold text-gray-700 mb-1 text-sm">Notas neste acorde:</h4>
+                <p class="text-gray-800 text-sm">${acorde.notas.join(', ')}</p>
+            `;
+            
+            // Atualizar áudio
+            audioAcorde.src = acorde.audio;
+        }
+
+        // Renderizar um diagrama de acorde
+        function renderizarDiagramaAcorde(elementoId, posicoes, ehGrande) {
+            const container = document.getElementById(elementoId);
+            if (!container) return;
+            
+            const largura = ehGrande ? 150 : 120;
+            const altura = ehGrande ? 180 : 150;
+            const qtdCordas = 6;
+            const qtdTrastes = 5;
+            
+            container.style.width = `${largura}px`;
+            container.style.height = `${altura}px`;
+            
+            // Criar capotraste
+            const capotraste = document.createElement('div');
+            capotraste.className = 'capotraste';
+            container.appendChild(capotraste);
+            
+            // Criar trastes
+            for (let i = 1; i <= qtdTrastes; i++) {
+                const traste = document.createElement('div');
+                traste.className = 'traste';
+                traste.style.top = `${20 + (i * 25)}px`;
+                container.appendChild(traste);
+            }
+            
+            // Criar cordas
+            for (let i = 0; i < qtdCordas; i++) {
+                const corda = document.createElement('div');
+                corda.className = 'corda';
+                corda.style.left = `${i * (largura / (qtdCordas - 1))}px`;
+                container.appendChild(corda);
+            }
+            
+            // Adicionar números dos trastes se for o diagrama grande
+            if (ehGrande) {
+                for (let i = 0; i <= qtdTrastes; i++) {
+                    const numeroTraste = document.createElement('div');
+                    numeroTraste.className = 'numero-casa';
+                    numeroTraste.textContent = i === 0 ? '' : i.toString();
+                    numeroTraste.style.top = `${20 + (i * 25) - 10}px`;
+                    numeroTraste.style.left = `${largura + 10}px`;
+                    container.appendChild(numeroTraste);
+                }
+            }
+            
+            // Adicionar posições dos dedos
+            posicoes.forEach((pos, indiceCorda) => {
+                const posicaoCorda = qtdCordas - 1 - indiceCorda; // Ordem inversa para cordas do violão
+                const x = posicaoCorda * (largura / (qtdCordas - 1));
+                
+                if (pos.casa === 'x') {
+                    // Corda muda
+                    const muda = document.createElement('div');
+                    muda.className = 'muda';
+                    muda.textContent = 'X';
+                    muda.style.left = `${x}px`;
+                    container.appendChild(muda);
+                } else if (pos.casa === 0) {
+                    // Corda solta
+                    const aberta = document.createElement('div');
+                    aberta.className = 'aberta';
+                    aberta.textContent = 'O';
+                    aberta.style.left = `${x}px`;
+                    container.appendChild(aberta);
+                } else {
+                    // Posição com dedo
+                    const y = 20 + (pos.casa * 25) - 12.5;
+                    const dedo = document.createElement('div');
+                    dedo.className = 'dedo';
+                    dedo.style.left = `${x}px`;
+                    dedo.style.top = `${y}px`;
+                    dedo.textContent = pos.dedo;
+                    container.appendChild(dedo);
+                }
+            });
+        }
+
+        // Buscar acordes por nome
+        function buscarAcordes() {
+            const termoBusca = campoBusca.value.trim().toLowerCase();
+            if (!termoBusca) return;
+            
+            const resultados = [];
+            
+            for (const acordeId in acordes) {
+                const acorde = acordes[acordeId];
+                if (acorde.nome.toLowerCase().includes(termoBusca)) {
+                    resultados.push(acordeId);
+                }
+            }
+            
+            if (resultados.length > 0) {
+                mostrarAcordes(resultados);
+                mostrarDetalheAcorde(resultados[0]);
+                tituloAtual.textContent = `Resultados para "${termoBusca}"`;
+                tituloResultados.textContent = 'Acordes Encontrados';
+                
+                // Resetar filtros
+                notaAtual = null;
+                tipoAtual = null;
+                atualizarBotoesAtivos();
+            } else {
+                resultadosAcordes.innerHTML = '<p class="text-gray-600 col-span-full text-center py-8 text-sm">Nenhum acorde encontrado com sua busca.</p>';
+                mostrarDetalheAcorde(null);
+                tituloAtual.textContent = `Nenhum resultado para "${termoBusca}"`;
+                tituloResultados.textContent = '';
+            }
+        }
+    </script>
+</body>
+</html>
